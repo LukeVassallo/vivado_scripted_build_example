@@ -1,6 +1,14 @@
 set outputdir work
 set projectName work
 set partNumber xc7a35tcsg324-1
+set jobs 4
+
+# TODO: Input validation
+if { $argc != 0 } {
+    puts "Changing the number of jobs from $jobs to [lindex $argv 0]"
+    set jobs [lindex $argv 0]
+    puts "Variable jobs now contains the value $jobs"
+}
 
 file mkdir $outputdir
 
@@ -29,10 +37,10 @@ set_property top design_1_wrapper.v [current_fileset]
 # set the vivado implementation strategy to 'Performance_NetDelay_high'
 #set_property strategy Performance_NetDelay_high [get_runs impl_1]
 
-launch_runs -jobs 4 synth_1	; # launched in the background
+launch_runs -jobs $jobs synth_1	; # launched in the background
 wait_on_run synth_1	; # therefore we must wait before proceeding
 
-launch_runs impl_1 -jobs 4 -to_step write_bitstream
+launch_runs impl_1 -jobs $jobs -to_step write_bitstream
 wait_on_run impl_1
 
 puts "Build complete."
